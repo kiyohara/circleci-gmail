@@ -30,11 +30,17 @@ def create_message(sender, to, subject, message_text, cset='utf-8'):
     message = MIMEText(message_text, 'plain', cset)
     message['to'] = to
     message['from'] = sender
-    message['subject'] = subject
-    return {'raw': base64.urlsafe_b64encode(message.as_string())}
+    message['subject'] = Header(subject, cset)
+
+    # https://thinkami.hatenablog.com/entry/2016/06/10/065731
+    message_bytes = message.as_string().encode(encoding=cset)
+    message_bytes_urlsafe = base64.urlsafe_b64encode(message_bytes)
+    message_str_urlsafe = message_bytes_urlsafe.decode(encoding=cset)
+
+    return {'raw': message_str_urlsafe}
 
 # https://developers.google.com/gmail/api/guides/sending
-def create_message_with_attachment(sender, to, subject, message_text, file):
+def create_message_with_attachment(sender, to, subject, message_text, file, cset='utf-8'):
     """Create a message for an email.
 
     Args:
@@ -50,7 +56,7 @@ def create_message_with_attachment(sender, to, subject, message_text, file):
     message = MIMEMultipart()
     message['to'] = to
     message['from'] = sender
-    message['subject'] = subject
+    message['subject'] = Header(subject, cset)
 
     msg = MIMEText(message_text)
     message.attach(msg)
@@ -62,7 +68,8 @@ def create_message_with_attachment(sender, to, subject, message_text, file):
     main_type, sub_type = content_type.split('/', 1)
     if main_type == 'text':
         fp = open(file, 'rb')
-        msg = MIMEText(fp.read(), _subtype=sub_type)
+        content = fp.read()
+        msg = MIMEText(content, _subtype=sub_type, _charset=cset)
         fp.close()
     elif main_type == 'image':
         fp = open(file, 'rb')
@@ -81,7 +88,12 @@ def create_message_with_attachment(sender, to, subject, message_text, file):
     msg.add_header('Content-Disposition', 'attachment', filename=filename)
     message.attach(msg)
 
-    return {'raw': base64.urlsafe_b64encode(message.as_string())}
+    # https://thinkami.hatenablog.com/entry/2016/06/10/065731
+    message_bytes = message.as_string().encode(encoding=cset)
+    message_bytes_urlsafe = base64.urlsafe_b64encode(message_bytes)
+    message_str_urlsafe = message_bytes_urlsafe.decode(encoding=cset)
+
+    return {'raw': message_str_urlsafe}
 
 # https://developers.google.com/gmail/api/guides/sending
 def send_message(service, user_id, message):
@@ -138,7 +150,8 @@ def main():
 
     service = build('gmail', 'v1', credentials=creds)
 
-    message = create_message(from_addr, to_addr, u'GOOGLE API mail send test', u'GOOGLE API mail send test')
+    # message = create_message(from_addr, to_addr, u'GOOGLE API mail send test テストサブジェクト', u'GOOGLE API mail send test テスト本文')
+    message = create_message_with_attachment(from_addr, to_addr, u'GOOGLE API mail send test テストサブジェクト', u'GOOGLE API mail send test テスト本文', 'attached-file.txt')
     send_message(service, 'me', message)
 
 if __name__ == '__main__':

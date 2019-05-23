@@ -1,0 +1,2 @@
+this is attachement test file.
+これは添付テストファイルです。
