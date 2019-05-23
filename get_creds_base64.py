@@ -5,7 +5,7 @@ import base64
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 
-SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
+SCOPES = ['https://www.googleapis.com/auth/gmail.send']
 
 def main():
     flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
