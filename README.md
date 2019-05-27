@@ -27,4 +27,7 @@
 
 12. Set environments to CircleCI env
 
-13. Push to Github
+13. Push branch to Github (-> CircleCI do nothing)
+
+14. Push TAG to Github (-> CircleCI exec `send_mail.py`)
+
