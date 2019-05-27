@@ -1,8 +1,6 @@
 from __future__ import print_function
 import os
 import sys
-import pickle
-import base64
 import lib
 
 from googleapiclient.discovery import build
