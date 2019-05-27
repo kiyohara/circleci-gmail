@@ -115,10 +115,11 @@ def send_message(service, user_id, message):
         return message
     except errors.HttpError as error:
         print('An error occurred: %s' % error)
-            
+
 def main():
     from_addr = os.environ.get('GOOGLE_API_MAIL_FROM')
     to_addr   = os.environ.get('GOOGLE_API_MAIL_TO')
+    git_tag   = os.environ.get('CIRCLE_TAG')
 
     creds_b64 = os.getenv("GOOGLE_API_CREDENTIALS")
     if not creds_b64:
@@ -150,8 +151,20 @@ def main():
 
     service = build('gmail', 'v1', credentials=creds)
 
-    # message = create_message(from_addr, to_addr, u'GOOGLE API mail send test テストサブジェクト', u'GOOGLE API mail send test テスト本文')
-    message = create_message_with_attachment(from_addr, to_addr, u'GOOGLE API mail send test テストサブジェクト', u'GOOGLE API mail send test テスト本文', 'attached-file.txt')
+    subject = u'GOOGLE API mail send test テストサブジェクト (%s)' % git_tag
+    content = u'''
+GOOGLE API mail send test テスト本文
+GOOGLE API mail send test テスト本文
+GOOGLE API mail send test テスト本文
+'''
+    attached_file_path = 'attached-file.txt'
+    if os.path.exists(attached_file_path):
+        print("%s exists" % attached_file_path)
+        message = create_message_with_attachment(from_addr, to_addr, subject, content, attached_file_path)
+    else:
+        print("%s not exists" % attached_file_path)
+        message = create_message(from_addr, to_addr, subject, content)
+
     send_message(service, 'me', message)
 
 if __name__ == '__main__':
