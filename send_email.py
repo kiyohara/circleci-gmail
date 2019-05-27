@@ -34,10 +34,10 @@ def create_message(sender, to, subject, message_text, cset='utf-8'):
 
     # https://thinkami.hatenablog.com/entry/2016/06/10/065731
     message_bytes = message.as_string().encode(encoding=cset)
-    message_bytes_urlsafe = base64.urlsafe_b64encode(message_bytes)
-    message_str_urlsafe = message_bytes_urlsafe.decode(encoding=cset)
+    message_b64 = base64.urlsafe_b64encode(message_bytes)
+    message_b64_str = message_b64.decode(encoding=cset)
 
-    return {'raw': message_str_urlsafe}
+    return {'raw': message_b64_str}
 
 # https://developers.google.com/gmail/api/guides/sending
 def create_message_with_attachment(sender, to, subject, message_text, file, cset='utf-8'):
@@ -90,10 +90,10 @@ def create_message_with_attachment(sender, to, subject, message_text, file, cset
 
     # https://thinkami.hatenablog.com/entry/2016/06/10/065731
     message_bytes = message.as_string().encode(encoding=cset)
-    message_bytes_urlsafe = base64.urlsafe_b64encode(message_bytes)
-    message_str_urlsafe = message_bytes_urlsafe.decode(encoding=cset)
+    message_b64 = base64.urlsafe_b64encode(message_bytes)
+    message_b64_str = message_b64.decode(encoding=cset)
 
-    return {'raw': message_str_urlsafe}
+    return {'raw': message_b64_str}
 
 # https://developers.google.com/gmail/api/guides/sending
 def send_message(service, user_id, message):
