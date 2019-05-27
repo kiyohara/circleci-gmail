@@ -1,0 +1,59 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.7.2
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          key: pipenv-{{ .Branch  }}-{{ checksum "Pipfile.lock" }}
+
+      - run:
+          name: Install requirements libs
+          command: pipenv sync
+
+      - save_cache:
+          key: pipenv-{{ .Branch  }}-{{ checksum "Pipfile.lock" }}
+          paths:
+            - ~/.local
+            - ~/.cache
+
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - .
+
+  send_mail:
+    docker:
+      - image: circleci/python:3.7.2
+
+    steps:
+      - attach_workspace:
+          at: ~/
+
+      - run:
+          name: Send mail by send_mail.py
+          command: pipenv run python send_mail.py
+
+workflows:
+  version: 2
+  send_mail:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /.*/
+
+      - send_mail:
+          requires:
+            - build
+
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /.*/
