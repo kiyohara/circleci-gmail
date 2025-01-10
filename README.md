@@ -20,10 +20,10 @@
 9. Save printed base64 string to `GOOGLE_API_CREDENTIALS` environment
 
 10. Set environment below
-    - `GOOGLE_API_GMAIL_TO`
-    - `GOOGLE_API_GMAIL_FROM`
+    - `GOOGLE_API_MAIL_TO`
+    - `GOOGLE_API_MAIL_FROM`
 
-11. Test run `$ pipenv run send_email.py`
+11. Test run `$ pipenv run python send_mail.py`
 
 12. Set environments to CircleCI env
 
